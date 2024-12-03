@@ -3,14 +3,13 @@ pub fn solution (input: &str) -> String {
     let mut right_side: Vec<i32> = Vec::new();
 
     for line in input.lines() {
-        let pair = line
+        let mut pair = line
             .trim()
-            .split("   ")
-            .map(|side| side.trim().parse::<i32>().unwrap())
-            .collect::<Vec<i32>>();
+            .split_whitespace()
+            .map(|x| x.parse::<i32>().unwrap());
 
-        left_side.push(pair[0]);
-        right_side.push(pair[1]);
+        left_side.push(pair.next().unwrap());
+        right_side.push(pair.next().unwrap());
     }
 
     left_side.sort();

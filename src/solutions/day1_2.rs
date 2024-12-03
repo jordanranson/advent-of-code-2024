@@ -5,17 +5,15 @@ pub fn solution (input: &str) -> String {
     let mut right_side = HashMap::new();
 
     for line in input.lines() {
-        let mut sides = line
+        let mut pair = line
             .trim()
             .split_whitespace()
             .map(|x| x.parse::<i32>().unwrap());
-        
-        let left = sides.next().unwrap();
-        left_side.push(left);
 
-        let right = sides.next().unwrap();
+        left_side.push(pair.next().unwrap());
+
         *right_side
-            .entry(right)
+            .entry(pair.next().unwrap())
             .or_insert(0) += 1;
     }
 
