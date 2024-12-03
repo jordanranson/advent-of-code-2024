@@ -11,9 +11,8 @@ pub struct SolutionResult {
 pub fn exec_solution(solution: &Solution, test: bool) -> SolutionResult {
     let input = std::fs::read_to_string(
         format!(
-            "./src/solutions/day{day}_{part}.input{test}.txt",
+            "./src/solutions/day{day}.input{test}.txt",
             day = solution.day[0],
-            part = solution.day[1],
             test = if test { ".test" } else { "" }
         ),
     )

@@ -22,10 +22,14 @@ struct Args {
     result: bool,
 }
 
-const SOLUTIONS: [Solution; 1] = [
+const SOLUTIONS: [Solution; 2] = [
     Solution {
         day: ["1", "1"],
         solution: solutions::day1_1::solution,
+    },
+    Solution {
+        day: ["1", "2"],
+        solution: solutions::day1_2::solution,
     },
 ];
 
@@ -40,7 +44,7 @@ fn main() {
     let args = Args::parse();
 
     let day_parts: Vec<&str> = args.day.split(',').collect();
-    
+
     let found_solution = SOLUTIONS.iter().find(|solution| {
         solution.day[0] == day_parts[0] && solution.day[1] == day_parts[1]
     });
