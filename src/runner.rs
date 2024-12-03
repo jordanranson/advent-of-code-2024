@@ -23,9 +23,9 @@ pub fn exec_solution(solution: &Solution, test: bool) -> SolutionResult {
     let result = (solution.solution)(&input);
     let elapsed = started.elapsed();
 
-    let time_elapsed = if elapsed.as_millis() > 0 {
+    let time_elapsed = if elapsed.as_millis() >= 10 {
         format!("{} ms", elapsed.as_millis())
-    } else if elapsed.as_micros() > 0 {
+    } else if elapsed.as_micros() >= 10 {
         format!("{} µs", elapsed.as_micros())
     } else {
         format!("{} ns", elapsed.as_nanos())

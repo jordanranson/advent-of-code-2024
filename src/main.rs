@@ -16,6 +16,10 @@ struct Args {
     // Use test input if provided
     #[arg(short, long)]
     test: bool,
+
+    // Show result value in console
+    #[arg(short, long)]
+    result: bool,
 }
 
 const SOLUTIONS: [Solution; 1] = [
@@ -70,11 +74,13 @@ fn main() {
         );
         println!(" ║ {} ║", pad_right(&output_time, OUTPUT_WIDTH + 9));
         
-        let output_result = format!(
-            "result -> {}",
-            solution_result.result.bright_green()
-        );
-        println!(" ║ {} ║", pad_right(&output_result, OUTPUT_WIDTH + 9));
+        if args.result {
+            let output_result = format!(
+                "result -> {}",
+                solution_result.result.bright_green()
+            );
+            println!(" ║ {} ║", pad_right(&output_result, OUTPUT_WIDTH + 9));
+        }
     } else {
         eprintln!(" ║ {} ║", pad_right("Error: Solution not found", OUTPUT_WIDTH).bright_red());
     }
