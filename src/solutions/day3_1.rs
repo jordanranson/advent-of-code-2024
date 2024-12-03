@@ -1,8 +1,9 @@
 use regex::Regex;
 
-pub fn solution (input: &str) -> String {
-    Regex::new(r"(?:mul\((\d+),(\d+)\))")
-        .unwrap()
+pub fn solution(input: &str) -> String {
+    let regex = Regex::new(r"(?:mul\((\d+),(\d+)\))").unwrap();
+
+    regex
         .captures_iter(input)
         .map(|cap| 
             cap[1].parse::<i32>().unwrap_or(0) * 

@@ -16,11 +16,11 @@ pub fn solution(input: &str) -> String {
                 mul_enabled = false;
                 return 0;
             }
-            if let (Some(left), Some(right)) = (cap.get(1), cap.get(2)) {
+            if let (Some(_), Some(_)) = (cap.get(1), cap.get(2)) {
                 if mul_enabled {
-                    let left_val = left.as_str().parse::<i32>().unwrap_or(0);
-                    let right_val = right.as_str().parse::<i32>().unwrap_or(0);
-                    return left_val * right_val;
+                    return
+                        cap[1].parse::<i32>().unwrap_or(0) *
+                        cap[2].parse::<i32>().unwrap_or(0);
                 }
             }
             0
