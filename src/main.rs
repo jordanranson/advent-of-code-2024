@@ -40,11 +40,7 @@ fn main() {
     let args = Args::parse();
 
     let day_parts: Vec<&str> = args.day.split(',').collect();
-    if day_parts.len() != 2 {
-        eprintln!("{}", "Error: Invalid day format. Use `day,part` (e.g., \"1,1\")".bright_red());
-        std::process::exit(1);
-    }
-
+    
     let found_solution = SOLUTIONS.iter().find(|solution| {
         solution.day[0] == day_parts[0] && solution.day[1] == day_parts[1]
     });
