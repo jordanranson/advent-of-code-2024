@@ -24,10 +24,9 @@ pub fn solution (input: &str) -> String {
         }
     
         valid_differences && (all_increasing || all_decreasing)
-    }).collect::<Vec<bool>>();
+    });
 
     reports
-        .into_iter()
         .filter(|&is_safe| is_safe)
         .count()
         .to_string()
