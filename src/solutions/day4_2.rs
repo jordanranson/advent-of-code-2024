@@ -1,7 +1,6 @@
 use std::char;
 
 fn find_xmas(puzzle: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
-    let chars = ['S', 'M'];
     let directions = [
         (-1, -1), // Up-left
         (-1, 1),  // Up-right
@@ -11,11 +10,11 @@ fn find_xmas(puzzle: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
         puzzle: &Vec<Vec<char>>,
         x: usize,
         y: usize,
-        chars: &[char],
         dx: isize,
         dy: isize,
     ) -> bool {
-        let mut found = [false; 2];
+        let mut sum = 0;
+        let target = 'S' as i32 + 'M' as i32;
 
         for i in [-1, 1] {
             let nx = x as isize + dx * i;
@@ -29,23 +28,15 @@ fn find_xmas(puzzle: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
                 return false;
             }
 
-            let ch = puzzle[ny as usize][nx as usize];
-            if let Some(pos) = chars.iter().position(|&c| c == ch) {
-                if found[pos] {
-                    return false;
-                }
-                found[pos] = true;
-            } else {
-                return false;
-            }
+            sum += puzzle[ny as usize][nx as usize] as i32
         }
 
-        found.iter().all(|&f| f)
+        sum == target
     }
 
     directions
         .iter()
-        .all(|&(dx, dy)| check_cross(puzzle, x, y, &chars, dx, dy))
+        .all(|&(dx, dy)| check_cross(puzzle, x, y, dx, dy))
 }
 
 pub fn solution (input: &str) -> String {
