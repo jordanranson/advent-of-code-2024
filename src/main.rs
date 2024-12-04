@@ -22,7 +22,7 @@ struct Args {
     result: bool,
 }
 
-const SOLUTIONS: [Solution; 6] = [
+const SOLUTIONS: [Solution; 8] = [
     Solution {
         day: ["1", "1"],
         solution: solutions::day1_1::solution,
@@ -47,9 +47,17 @@ const SOLUTIONS: [Solution; 6] = [
         day: ["3", "2"],
         solution: solutions::day3_2::solution,
     },
+    Solution {
+        day: ["4", "1"],
+        solution: solutions::day4_1::solution,
+    },
+    Solution {
+        day: ["4", "2"],
+        solution: solutions::day4_2::solution,
+    },
 ];
 
-const OUTPUT_WIDTH: usize = 40;
+const OUTPUT_WIDTH: usize = 25;
 
 fn pad_right(input: &str, length: usize) -> String {
     let padding = " ".repeat(length - input.chars().count());
@@ -66,7 +74,7 @@ fn main() {
     });
 
     println!("");
-    println!(" ╔══════════════════════════════════════════╗");
+    println!(" ╔═══════════════════════════╗");
 
     let output_header = format!(
         ">> Day {day}, Part {part}",
@@ -75,7 +83,7 @@ fn main() {
     );
     println!(" ║ {} ║", pad_right(&output_header, OUTPUT_WIDTH).bold());
 
-    println!(" ╟──────────────────────────────────────────╢");
+    println!(" ╟───────────────────────────╢");
 
     if let Some(solution) = found_solution {
         let solution_result = exec_solution(solution, args.test);
@@ -101,6 +109,6 @@ fn main() {
         eprintln!(" ║ {} ║", pad_right("Error: Solution not found", OUTPUT_WIDTH).bright_red());
     }
 
-    println!(" ╚══════════════════════════════════════════╝");
+    println!(" ╚═══════════════════════════╝");
     println!();
 }
