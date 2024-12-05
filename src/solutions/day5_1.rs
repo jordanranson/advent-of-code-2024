@@ -1,76 +1,33 @@
-
-pub fn solution (input: &str) -> String {
-    let parts = input
-        .split("\n\n")
-        .collect::<Vec<&str>>();
-
-    let page_order_rules: Vec<Vec<i32>> = parts
-        .get(0)
-        .unwrap()
+fn parse_input (char: char, input: &str) -> Vec<Vec<i32>> {
+    input
         .lines()
-        .map(|x| 
-            x
-                .split("|")
-                .map(|y| 
-                    y
-                        .trim()
-                        .parse::<i32>()
-                        .unwrap()
-                )
-                .collect()
-        )
-        .collect();
+        .map(|line| line.split(char).map(|x| x.trim().parse::<i32>().unwrap()).collect())
+        .collect()
+}
 
-    let pages_per_update: Vec<Vec<i32>> = parts
-        .get(1)
-        .unwrap()
-        .lines()
-        .map(|x| 
-            x
-                .split(",")
-                .map(|y| 
-                    y
-                        .trim()
-                        .parse::<i32>()
-                        .unwrap()
-                )
-                .collect()
-        )
-        .collect();
+fn is_valid_update (rules: &[Vec<i32>], pages: &[i32]) -> bool {
+    for rule in rules {
+        let (page_a, page_b) = (rule[0], rule[1]);
+        let index_a = pages.iter().position(|&p| p == page_a);
+        let index_b = pages.iter().position(|&p| p == page_b);
 
-    let check_if_valid = |pages: &Vec<i32>| {
-        for rule in &page_order_rules {
-            let (page_a, page_b) = (rule[0], rule[1]);
-    
-            let mut index_a = None;
-            let mut index_b = None;
-    
-            for (index, &page) in pages.iter().enumerate() {
-                if page == page_a {
-                    index_a = Some(index);
-                }
-                if page == page_b {
-                    index_b = Some(index);
-                }
-    
-                if index_a.is_some() && index_b.is_some() {
-                    break;
-                }
-            }
-    
-            if let (Some(a), Some(b)) = (index_a, index_b) {
-                if a > b {
-                    return false;
-                }
+        if let (Some(a), Some(b)) = (index_a, index_b) {
+            if a > b {
+                return false;
             }
         }
-    
-        true
-    };
-    
-    pages_per_update
+    }
+    true
+}
+
+pub fn solution(input: &str) -> String {
+    let parts: Vec<&str> = input.split("\n\n").collect();
+    let rules = parse_input('|', parts[0]);
+    let updates = parse_input(',', parts[1]);
+
+    updates
         .iter()
-        .filter(|pages| check_if_valid(pages))
+        .filter(|pages| is_valid_update(&rules, pages))
         .map(|pages| pages[pages.len() / 2])
         .sum::<i32>()
         .to_string()
