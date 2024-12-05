@@ -22,7 +22,7 @@ struct Args {
     result: bool,
 }
 
-const SOLUTIONS: [Solution; 8] = [
+const SOLUTIONS: [Solution; 10] = [
     Solution {
         day: ["1", "1"],
         solution: solutions::day1_1::solution,
@@ -54,6 +54,14 @@ const SOLUTIONS: [Solution; 8] = [
     Solution {
         day: ["4", "2"],
         solution: solutions::day4_2::solution,
+    },
+    Solution {
+        day: ["5", "1"],
+        solution: solutions::day5_1::solution,
+    },
+    Solution {
+        day: ["5", "2"],
+        solution: solutions::day5_2::solution,
     },
 ];
 
