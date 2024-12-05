@@ -20,7 +20,7 @@ fn is_valid_update (rules: &[Vec<i32>], pages: &[i32]) -> bool {
     true
 }
 
-pub fn solution(input: &str) -> String {
+pub fn solution (input: &str) -> String {
     let parts: Vec<&str> = input.split("\n\n").collect();
     let rules = parse_input('|', parts[0]);
     let updates = parse_input(',', parts[1]);
