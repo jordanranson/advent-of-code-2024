@@ -9,7 +9,7 @@ pub fn solution(input: &str) -> String {
 
     let mut positions = vec![(x, y)];
     let mut cur_direction = 0;
-    let directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+    let directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]; // up, right, down, left
 
     loop {
         let (dx, dy) = directions[cur_direction];

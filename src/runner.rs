@@ -22,7 +22,8 @@ pub fn exec_solution(solution: &Solution, test: bool) -> SolutionResult {
 
     let mut times: Vec<Duration> = Vec::new();
 
-    for _ in 0..10 {
+    let num_loops = if test { 10 } else { 1 };
+    for _ in 0..num_loops {
         let started = std::time::Instant::now();
         (solution.solution)(&input);
         times.push(started.elapsed());
