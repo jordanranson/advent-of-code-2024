@@ -3,5 +3,5 @@
 To run a solution, use:
 
 ```rs
-cargo run --release -- --day <day>,<part> [--result] [--test]
+cargo run --release -- --day <day> [--out] [--test]
 ```

@@ -1,15 +1,17 @@
+use std::time::Duration;
+
+// cargo crates
 use clap::Parser;
 use colored::*;
 
-mod runner;
-use runner::*;
-
-mod solutions;
+// local crates
+mod solutions; 
+use solutions::*;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    // Specify the day and part as `day,part` (e.g., "1,1")
+    // Specify the day
     #[arg(short, long)]
     day: String,
 
@@ -19,112 +21,123 @@ struct Args {
 
     // Show result value in console
     #[arg(short, long)]
-    result: bool,
+    out: bool,
 }
 
-const SOLUTIONS: [Solution; 12] = [
-    Solution {
-        day: ["1", "1"],
-        solution: solutions::day1_1::solution,
-    },
-    Solution {
-        day: ["1", "2"],
-        solution: solutions::day1_2::solution,
-    },
-    Solution {
-        day: ["2", "1"],
-        solution: solutions::day2_1::solution,
-    },
-    Solution {
-        day: ["2", "2"],
-        solution: solutions::day2_2::solution,
-    },
-    Solution {
-        day: ["3", "1"],
-        solution: solutions::day3_1::solution,
-    },
-    Solution {
-        day: ["3", "2"],
-        solution: solutions::day3_2::solution,
-    },
-    Solution {
-        day: ["4", "1"],
-        solution: solutions::day4_1::solution,
-    },
-    Solution {
-        day: ["4", "2"],
-        solution: solutions::day4_2::solution,
-    },
-    Solution {
-        day: ["5", "1"],
-        solution: solutions::day5_1::solution,
-    },
-    Solution {
-        day: ["5", "2"],
-        solution: solutions::day5_2::solution,
-    },
-    Solution {
-        day: ["6", "1"],
-        solution: solutions::day6_1::solution,
-    },
-    Solution {
-        day: ["6", "2"],
-        solution: solutions::day6_2::solution,
-    },
-];
+const OUTPUT_WIDTH: usize = 27;
+const NUMBER_FORMATTING_SEP: &str = ",";
 
-const OUTPUT_WIDTH: usize = 25;
-
-fn pad_right(input: &str, length: usize) -> String {
+fn pad_right (input: &str, length: usize) -> String {
     let padding = " ".repeat(length - input.chars().count());
     format!("{}{}", input, padding)
 }
 
-fn main() {
+fn format_number (sep: &str, number: u128) -> String {
+    number.to_string()
+        .as_bytes()
+        .rchunks(3)
+        .rev()
+        .map(std::str::from_utf8)
+        .collect::<Result<Vec<&str>, _>>()
+        .unwrap()
+        .join(sep)
+}
+
+fn format_time_elapsed (elapsed: &Duration) -> String {
+    if elapsed.as_millis() >= 10 {
+        return format!("{} ms", format_number(NUMBER_FORMATTING_SEP, elapsed.as_millis()));
+    } else if elapsed.as_micros() >= 10 {
+        return format!("{} µs", format_number(NUMBER_FORMATTING_SEP, elapsed.as_micros()));
+    } else {
+        return format!("{} ns", format_number(NUMBER_FORMATTING_SEP, elapsed.as_nanos()));
+    }
+}
+
+fn exec_solution (day: &usize, solution: &Solution, test: bool) -> SolutionResult {
+    let input = std::fs::read_to_string(
+        format!(
+            "./src/solutions/day{day}/input{test}.txt",
+            day = day + 1,
+            test = if test { ".test" } else { "" }
+        ),
+    )
+    .expect("Could not read file.");
+
+    let mut parts: Vec<SolutionResultPart> = Vec::new();
+
+    for part in solution.parts.iter() {
+        let mut times: Vec<Duration> = Vec::new();
+
+        let num_loops = if test { 10 } else { 1 };
+        for _ in 0..num_loops {
+            let started = std::time::Instant::now();
+            (part.solve)(&input);
+            times.push(started.elapsed());
+        }
+
+        let result = (part.solve)(&input);
+        
+        times.sort();
+        let time_elapsed = times.get(0).unwrap();
+
+        parts.push(SolutionResultPart {
+            time_elapsed: *time_elapsed,
+            result,
+        });
+    }
+
+    SolutionResult {
+        parts,
+    }
+}
+
+fn main () {
     let args = Args::parse();
-
-    let day_parts: Vec<&str> = args.day.split(',').collect();
-
-    let found_solution = SOLUTIONS.iter().find(|solution| {
-        solution.day[0] == day_parts[0] && solution.day[1] == day_parts[1]
-    });
+    let day = args.day.parse::<usize>().unwrap() - 1;
+    let found_solution = SOLUTIONS.get(day);
 
     println!("");
-    println!(" ╔═══════════════════════════╗");
-
-    let output_header = format!(
-        ">> Day {day}, Part {part}",
-        day = day_parts[0],
-        part = day_parts[1],
-    );
+    println!(" ╔═════════════════════════════╗");
+    let output_header = format!("Advent of Code '24 - Day {}", day + 1);
     println!(" ║ {} ║", pad_right(&output_header, OUTPUT_WIDTH).bold());
+    if args.test {
+        println!(" ║ {} ║", pad_right(">> using test input", OUTPUT_WIDTH).bright_yellow());
+    }
 
-    println!(" ╟───────────────────────────╢");
+    let mut total_time_elapsed = Duration::new(0, 0);
 
     if let Some(solution) = found_solution {
-        let solution_result = exec_solution(solution, args.test);
+        let solution_result = exec_solution(&day, &solution, args.test);
 
-        if args.test {
-            println!(" ║ {} ║", pad_right("Warning: Using test input", OUTPUT_WIDTH).bright_yellow());
-        }
+        solution_result.parts.iter().enumerate().for_each(|(index, part)| {
+            total_time_elapsed += part.time_elapsed;
 
-        let output_time = format!(
-            "time   -> {}",
-            solution_result.time_elapsed.bright_green()
-        );
-        println!(" ║ {} ║", pad_right(&output_time, OUTPUT_WIDTH + 9));
-        
-        if args.result {
-            let output_result = format!(
-                "result -> {}",
-                solution_result.result.bright_green()
+            println!(" ╟─── part {} ──────────────────╢", index + 1);
+            
+            let output_time = format!(
+                "time       -> {}",
+                format_time_elapsed(&part.time_elapsed).bright_green()
             );
-            println!(" ║ {} ║", pad_right(&output_result, OUTPUT_WIDTH + 9));
-        }
+            println!(" ║ {} ║", pad_right(&output_time, OUTPUT_WIDTH + 9));
+            
+            if args.out {
+                let output_result = format!(
+                    "result     -> {}",
+                    part.result.bright_green()
+                );
+                println!(" ║ {} ║", pad_right(&output_result, OUTPUT_WIDTH + 9));
+            }
+        });
     } else {
         eprintln!(" ║ {} ║", pad_right("Error: Solution not found", OUTPUT_WIDTH).bright_red());
     }
 
-    println!(" ╚═══════════════════════════╝");
+    println!(" ╟─────────────────────────────╢");
+    let total_time = format!(
+        "total time -> {}",
+        format_time_elapsed(&total_time_elapsed).bright_green()
+    );
+    println!(" ║ {} ║", pad_right(&total_time, OUTPUT_WIDTH + 9));
+    println!(" ╚═════════════════════════════╝");
     println!();
 }

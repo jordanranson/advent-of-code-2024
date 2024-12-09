@@ -1,12 +1,34 @@
-pub mod day1_1;
-pub mod day1_2;
-pub mod day2_1;
-pub mod day2_2;
-pub mod day3_1;
-pub mod day3_2;
-pub mod day4_1;
-pub mod day4_2;
-pub mod day5_1;
-pub mod day5_2;
-pub mod day6_1;
-pub mod day6_2;
+use std::time::*;
+
+pub struct Solution {
+    pub parts: [SolutionPart; 2],
+}
+
+pub struct SolutionPart {
+    pub solve: fn (input: &str) -> String,
+}
+
+pub struct SolutionResult {
+    pub parts: Vec<SolutionResultPart>,
+}
+
+pub struct SolutionResultPart {
+    pub time_elapsed: Duration,
+    pub result: String,
+}
+
+mod day1;
+mod day2;
+mod day3;
+mod day4;
+mod day5;
+mod day6;
+
+pub const SOLUTIONS: [Solution; 6]= [
+    day1::SOLUTION,
+    day2::SOLUTION,
+    day3::SOLUTION,
+    day4::SOLUTION,
+    day5::SOLUTION,
+    day6::SOLUTION,
+];
