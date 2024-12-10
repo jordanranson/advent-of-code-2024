@@ -24,11 +24,16 @@ struct Args {
     out: bool,
 }
 
-const OUTPUT_WIDTH: usize = 27;
+const OUTPUT_WIDTH: usize = 35;
 const NUMBER_FORMATTING_SEP: &str = ",";
 
 fn pad_right (input: &str, length: usize) -> String {
-    let padding = " ".repeat(length - input.chars().count());
+    let input_len = input.chars().count();
+    if length <= input_len {
+        return input.to_string();
+    }
+
+    let padding = " ".repeat(length - input_len);
     format!("{}{}", input, padding)
 }
 
@@ -97,7 +102,7 @@ fn main () {
     let found_solution = SOLUTIONS.get(day);
 
     println!("");
-    println!(" ╔═════════════════════════════╗");
+    println!(" ╔═════════════════════════════════════╗");
     let output_header = format!("Advent of Code '24 - Day {}", day + 1);
     println!(" ║ {} ║", pad_right(&output_header, OUTPUT_WIDTH).bold());
     if args.test {
@@ -112,7 +117,7 @@ fn main () {
         solution_result.parts.iter().enumerate().for_each(|(index, part)| {
             total_time_elapsed += part.time_elapsed;
 
-            println!(" ╟─── part {} ──────────────────╢", index + 1);
+            println!(" ╟─── part {} ──────────────────────────╢", index + 1);
             
             let output_time = format!(
                 "time       -> {}",
@@ -132,12 +137,12 @@ fn main () {
         eprintln!(" ║ {} ║", pad_right("Error: Solution not found", OUTPUT_WIDTH).bright_red());
     }
 
-    println!(" ╟─────────────────────────────╢");
+    println!(" ╟─────────────────────────────────────╢");
     let total_time = format!(
         "total time -> {}",
         format_time_elapsed(&total_time_elapsed).bright_green()
     );
     println!(" ║ {} ║", pad_right(&total_time, OUTPUT_WIDTH + 9));
-    println!(" ╚═════════════════════════════╝");
+    println!(" ╚═════════════════════════════════════╝");
     println!();
 }
