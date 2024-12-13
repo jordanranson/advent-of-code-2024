@@ -49,7 +49,13 @@ fn format_number (sep: &str, number: u128) -> String {
 }
 
 fn format_time_elapsed (elapsed: &Duration) -> String {
-    if elapsed.as_millis() >= 10 {
+    if elapsed.as_secs() / 3600 >= 10 {
+        return format!("{} h", format_number(NUMBER_FORMATTING_SEP, (elapsed.as_secs() / 3600) as u128));
+    } else if elapsed.as_secs() / 60 >= 10 {
+        return format!("{} m", format_number(NUMBER_FORMATTING_SEP, (elapsed.as_secs() / 60) as u128));
+    } else if elapsed.as_secs() >= 10 {
+        return format!("{} s", format_number(NUMBER_FORMATTING_SEP, elapsed.as_secs() as u128));
+    } else if elapsed.as_millis() >= 10 {
         return format!("{} ms", format_number(NUMBER_FORMATTING_SEP, elapsed.as_millis()));
     } else if elapsed.as_micros() >= 10 {
         return format!("{} µs", format_number(NUMBER_FORMATTING_SEP, elapsed.as_micros()));
@@ -73,7 +79,7 @@ fn exec_solution (day: &usize, solution: &Solution, test: bool) -> SolutionResul
     for part in solution.parts.iter() {
         let mut times: Vec<Duration> = Vec::new();
 
-        let num_loops = if test { 1 } else { 10 };
+        let num_loops = if test { 1 } else { 1 };
         let mut result = String::new();
 
         for _ in 0..num_loops {
