@@ -73,14 +73,14 @@ fn exec_solution (day: &usize, solution: &Solution, test: bool) -> SolutionResul
     for part in solution.parts.iter() {
         let mut times: Vec<Duration> = Vec::new();
 
-        let num_loops = if test { 10 } else { 1 };
+        let num_loops = if test { 1 } else { 10 };
+        let mut result = String::new();
+
         for _ in 0..num_loops {
             let started = std::time::Instant::now();
-            (part.solve)(&input);
+            result = (part.solve)(&input);
             times.push(started.elapsed());
         }
-
-        let result = (part.solve)(&input);
         
         times.sort();
         let time_elapsed = times.get(0).unwrap();
